@@ -1,0 +1,29 @@
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.8.4'
+    id 'com.gradle.plugin-publish' version '0.10.1'
+    id 'pl.allegro.tech.build.axion-release' version '1.10.2'
+    id 'com.github.ben-manes.versions' version '0.27.0'
+}
+
+group = 'com.github.michaelruocco'
+
+scmVersion {
+    versionCreator 'versionWithBranch'
+    tag {
+        prefix = 'gradle-postman-runner'
+    }
+}
+project.version = scmVersion.version
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+
+    testCompile 'junit:junit:4.12'
+}
