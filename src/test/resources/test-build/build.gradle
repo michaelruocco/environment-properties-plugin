@@ -1,0 +1,8 @@
+plugins {
+    id 'com.github.michaelruocco.environment-properties'
+}
+
+generateEnvironmentProperties {
+    yamlPath = file('../config/properties.yml')
+    propertiesPath = 'build/environment.properties'
+}

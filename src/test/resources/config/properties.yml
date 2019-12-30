@@ -1,0 +1,20 @@
+properties:
+  global: &config-global
+    app.name: test-service
+    abc.url: http://localhost:8080
+
+environments:
+
+  local:
+    <<: *config-global
+
+  aat: &config-aat
+    <<: *config-global
+
+    abc.url: http://aat:8080
+
+  sit:
+    <<: *config-global
+
+    app.name: test-service-sit
+    abc.url: http://sit:8080

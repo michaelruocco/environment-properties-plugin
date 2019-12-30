@@ -23,7 +23,13 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile gradleApi()
+    //compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile 'commons-io:commons-io:2.5'
+    compile 'org.yaml:snakeyaml:1.25'
 
     testCompile 'junit:junit:4.12'
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+    }
 }
