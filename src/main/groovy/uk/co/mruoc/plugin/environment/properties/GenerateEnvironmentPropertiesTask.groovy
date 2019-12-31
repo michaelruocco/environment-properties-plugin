@@ -13,18 +13,16 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
 
     @Input
     @Optional
-    String defaultEnvironment
+    String environment
 
     @Input
-    String yamlPath
+    File yamlFile
 
     @Input
     String propertiesPath
 
-    private String environment
-
     GenerateEnvironmentPropertiesTask() {
-        description = 'Generates environment.properties file from properties.yaml based on specified environment'
+        description = 'Generates properties file from properties.yaml based on specified environment'
     }
 
     @TaskAction
@@ -34,18 +32,8 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
     }
 
     @Internal
-    protected getEnvironment() {
-        environment
-    }
-
-    @Internal
-    protected getYamlFile() {
-        return new File(yamlPath)
-    }
-
-    @Internal
     protected getPropertiesFile() {
-        return new File(propertiesPath)
+        return project.file(propertiesPath)
     }
 
     private String loadEnvironment() {
@@ -54,9 +42,9 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
             log.info("using environment property value ${environmentProperty}")
             return environmentProperty
         }
-        if (defaultEnvironment) {
-            log.info("using default environment value ${defaultEnvironment}")
-            return defaultEnvironment
+        if (environment) {
+            log.info("using environment value ${environment}")
+            return environment
         }
         log.info("no environment specified returning local")
         return "local"

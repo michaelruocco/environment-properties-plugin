@@ -8,6 +8,7 @@ class EnvironmentPropertiesPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.task('generateEnvironmentProperties', type: GenerateEnvironmentPropertiesTask)
+        project.task('generateMultipleEnvironmentProperties', type: GenerateMultipleEnvironmentPropertiesTask)
     }
 
 }

@@ -28,7 +28,9 @@ class FileCreator {
 
 
     static def createParentDirectoryIfDoesNotExist(File file) {
-        def parentDirectory = file.getParentFile();
+        def parentDirectory = file.getParentFile()
+        log.info("checking if parent directory ${parentDirectory.absolutePath} exists")
+
         if (parentDirectory.exists()) {
             log.info("parent directory ${parentDirectory.absolutePath} already exists")
             return
