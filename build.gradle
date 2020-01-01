@@ -136,7 +136,7 @@ pluginBundle {
 
     plugins {
         environmentPropertiesPlugin {
-            id = 'com.github.michaelruocco.environment-properties-plugin'
+            id = 'com.github.michaelruocco.environment-properties'
             displayName = 'environment-properties-plugin'
         }
     }

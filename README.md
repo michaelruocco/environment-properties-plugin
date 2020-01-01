@@ -141,11 +141,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.michaelruocco:environment-properties-pligin:0.1.0'
+        classpath 'com.github.michaelruocco:environment-properties-plugin:0.1.0'
     }
 }
 
-apply plugin: 'com.github.michaelruocco:environment-properties-pligin'
+apply plugin: 'com.github.michaelruocco:environment-properties'
 ```
 
 or alternatively:
