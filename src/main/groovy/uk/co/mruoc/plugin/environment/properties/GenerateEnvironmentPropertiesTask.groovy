@@ -16,7 +16,7 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
     String environment
 
     @Input
-    File yamlFile
+    String yamlPath
 
     @Input
     String propertiesPath
@@ -29,6 +29,11 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
     def run() {
         def generator = new PropertiesGenerator(yamlFile, propertiesFile, loadEnvironment())
         generator.generate()
+    }
+
+    @Internal
+    protected getYamlFile() {
+        return project.file(yamlPath)
     }
 
     @Internal

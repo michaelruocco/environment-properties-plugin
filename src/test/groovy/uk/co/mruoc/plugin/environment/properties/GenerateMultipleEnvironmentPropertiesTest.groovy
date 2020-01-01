@@ -32,8 +32,8 @@ class GenerateMultipleEnvironmentPropertiesTest extends Specification {
         buildFile << """
             generateMultipleEnvironmentProperties {
                 environments = [ 'aat', 'sit' ]
-                yamlFile = file('properties.yml')
-                propertiesPath = 'config/%ENV%/environment.properties'
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/{{env}}/environment.properties'
             }
         """
 

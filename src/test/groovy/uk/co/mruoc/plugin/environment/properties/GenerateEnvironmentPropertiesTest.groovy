@@ -31,7 +31,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         given:
         buildFile << """
             generateEnvironmentProperties {
-                yamlFile = file('properties.yml')
+                yamlPath = 'properties.yml'
                 propertiesPath = 'config/environment.properties'
             }
         """
@@ -57,7 +57,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         given:
         buildFile << """
             generateEnvironmentProperties {
-                yamlFile = file('properties.yml')
+                yamlPath = 'properties.yml'
                 propertiesPath = 'config/environment.properties'
             }
         """
@@ -84,7 +84,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         buildFile << """
             generateEnvironmentProperties {
                 environment = 'sit'
-                yamlFile = file('properties.yml')
+                yamlPath = 'properties.yml'
                 propertiesPath = 'config/environment.properties'
             }
         """

@@ -14,7 +14,7 @@ class GenerateMultipleEnvironmentPropertiesTask extends DefaultTask {
     Collection<String> environments
 
     @Input
-    File yamlFile
+    String yamlPath
 
     @Input
     String propertiesPath
@@ -34,11 +34,16 @@ class GenerateMultipleEnvironmentPropertiesTask extends DefaultTask {
 
     @Internal
     protected buildPropertiesFile(String environment) {
-        final def path = propertiesPath.replaceAll("%ENV%", environment)
+        final def path = propertiesPath.replaceAll("\\{\\{env}}", environment)
         log.info("building properties file with path ${path}")
         def file = project.file(path)
         log.info("created properties file at ${file.absolutePath}")
         file
+    }
+
+    @Internal
+    protected getYamlFile() {
+        return project.file(yamlPath)
     }
 
 }
