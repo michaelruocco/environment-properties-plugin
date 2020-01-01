@@ -38,3 +38,106 @@ test {
         exceptionFormat "full"
     }
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name 'BSD License'
+            url 'http://www.opensource.org/licenses/bsd-license.php'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'mruoc'
+            name 'Michael Ruocco'
+            email 'michael.ruocco@hotmail.com'
+        }
+    }
+
+    scm {
+        url 'https://github.com/michaelruocco/environment-properties-plugin'
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId project.group
+            artifactId 'environment-properties-plugin'
+            version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Gradle plugin to generator environment properties')
+                root.appendNode('name', 'environment-properties-plugin')
+                root.appendNode('url', 'https://github.com/michaelruocco/environment-properties-plugin')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['mavenPublication']
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'environment-properties-plugin'
+        userOrg = 'michaelruocco'
+        licenses = ['bsd']
+        websiteUrl = 'https://github.com/michaelruocco/environment-properties-plugin'
+        vcsUrl = 'https://github.com/michaelruocco/environment-properties-plugin.git'
+        labels = ['environment', 'properties', 'gradle']
+        version {
+            name = project.version
+            desc = project.version
+            released  = new Date()
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = true
+            }
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/michaelruocco/environment-properties-plugin'
+    vcsUrl = 'https://github.com/michaelruocco/environment-properties-plugin.git'
+    description = 'Gradle plugin that enables generation of environment properties'
+    tags = ['environment', 'properties']
+    version = project.version
+
+    plugins {
+        environmentPropertiesPlugin {
+            id = 'com.github.michaelruocco.environment-properties-plugin'
+            displayName = 'environment-properties-plugin'
+        }
+    }
+}
