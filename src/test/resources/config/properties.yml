@@ -1,20 +1,30 @@
 properties:
-  global: &config-global
+  default: &config-default
     app.name: test-service
     abc.url: http://localhost:8080
 
 environments:
 
   local:
-    <<: *config-global
+    <<: *config-default
 
   aat: &config-aat
-    <<: *config-global
+    <<: *config-default
 
-    abc.url: http://aat:8080
+    app.name: aat-service
+
+  aat1:
+    <<: *config-aat
+
+    abc.url: http://aat1:8081
+
+  aat2:
+    <<: *config-aat
+
+    abc.url: http://aat2:8082
 
   sit:
-    <<: *config-global
+    <<: *config-default
 
     app.name: test-service-sit
     abc.url: http://sit:8080

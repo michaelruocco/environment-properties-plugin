@@ -27,19 +27,20 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         dest << src.text
     }
 
-    def "generate properties local environment if environment not specified"() {
+    def "generate properties for local environment"() {
         given:
         buildFile << """
             generateEnvironmentProperties {
+                environment = 'local'
                 yamlPath = 'properties.yml'
                 propertiesPath = 'config/environment.properties'
             }
         """
 
         when:
-        def result = GradleRunner.create()
+        final def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('generateEnvironmentProperties', '--info')
+                .withArguments('generateEnvironmentProperties', '--info', '-Penv=sit')
                 .withPluginClasspath()
                 .build()
 
@@ -53,33 +54,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
                 "abc.url=http://localhost:8080\n"
     }
 
-    def "generate properties for aat environment if specified by environment property"() {
-        given:
-        buildFile << """
-            generateEnvironmentProperties {
-                yamlPath = 'properties.yml'
-                propertiesPath = 'config/environment.properties'
-            }
-        """
-
-        when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('generateEnvironmentProperties', '--info', '-Penv=aat')
-                .withPluginClasspath()
-                .build()
-
-        then:
-        println result.output
-        result.task(':generateEnvironmentProperties').outcome == SUCCESS
-
-        new File("${testProjectDir.root}/config/environment.properties").text ==
-                "# generated from properties.yml for aat environment\n" +
-                "app.name=test-service\n" +
-                "abc.url=http://aat:8080\n"
-    }
-
-    def "generate properties for sit environment if specified in build.gradle"() {
+    def "generate properties for sit environment"() {
         given:
         buildFile << """
             generateEnvironmentProperties {
@@ -104,6 +79,33 @@ class GenerateEnvironmentPropertiesTest extends Specification {
                 "# generated from properties.yml for sit environment\n" +
                 "app.name=test-service-sit\n" +
                 "abc.url=http://sit:8080\n"
+    }
+
+    def "generate properties from cascaded config for aat2 environment"() {
+        given:
+        buildFile << """
+            generateEnvironmentProperties {
+                environment = 'aat2'
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/environment.properties'
+            }
+        """
+
+        when:
+        final def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('generateEnvironmentProperties', '--info')
+                .withPluginClasspath()
+                .build()
+
+        then:
+        println result.output
+        result.task(':generateEnvironmentProperties').outcome == SUCCESS
+
+        new File("${testProjectDir.root}/config/environment.properties").text ==
+                "# generated from properties.yml for aat2 environment\n" +
+                "app.name=aat-service\n" +
+                "abc.url=http://aat2:8082\n"
     }
 
 }

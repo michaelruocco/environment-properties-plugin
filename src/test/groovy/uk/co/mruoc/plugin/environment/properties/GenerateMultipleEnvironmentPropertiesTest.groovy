@@ -31,7 +31,7 @@ class GenerateMultipleEnvironmentPropertiesTest extends Specification {
         given:
         buildFile << """
             generateMultipleEnvironmentProperties {
-                environments = [ 'aat', 'sit' ]
+                environments = [ 'aat1', 'sit' ]
                 yamlPath = 'properties.yml'
                 propertiesPath = 'config/{{env}}/environment.properties'
             }
@@ -48,10 +48,10 @@ class GenerateMultipleEnvironmentPropertiesTest extends Specification {
         println result.output
         result.task(":generateMultipleEnvironmentProperties").outcome == SUCCESS
 
-        new File("${testProjectDir.root}/config/aat/environment.properties").text ==
-                "# generated from properties.yml for aat environment\n" +
-                "app.name=test-service\n" +
-                "abc.url=http://aat:8080\n"
+        new File("${testProjectDir.root}/config/aat1/environment.properties").text ==
+                "# generated from properties.yml for aat1 environment\n" +
+                "app.name=aat-service\n" +
+                "abc.url=http://aat1:8081\n"
 
         new File("${testProjectDir.root}/config/sit/environment.properties").text ==
                 "# generated from properties.yml for sit environment\n" +
