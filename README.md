@@ -1,6 +1,7 @@
 # Environment Properties Plugin
 
 [![Build Status](https://travis-ci.org/michaelruocco/environment-properties-plugin.svg?branch=master)](https://travis-ci.org/michaelruocco/environment-properties-plugin)
+[![Download](https://api.bintray.com/packages/michaelruocco/maven/environment-properties-plugin/images/download.svg) ](https://bintray.com/michaelruocco/maven/environment-properties-plugin/_latestVersion)
 
 This plugin intends to make the management of environment specific properties easier, often it is a pain if you have
 and environment specific properties that is the same in a number of environments but needs to vary in one or a couple
