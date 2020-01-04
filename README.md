@@ -146,7 +146,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.github.michaelruocco:environment-properties'
+apply plugin: 'com.github.michaelruocco.environment-properties'
 ```
 
 or alternatively:
