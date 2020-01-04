@@ -1,10 +1,13 @@
 package uk.co.mruoc.plugin.environment.properties
 
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import static org.assertj.core.api.Assertions.assertThat
+import static org.assertj.core.api.Assertions.catchThrowable
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class GenerateEnvironmentPropertiesTest extends Specification {
@@ -27,7 +30,59 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         dest << src.text
     }
 
-    def "generate properties for local environment"() {
+    def "should error if environment not present in yaml and default config is not specified"() {
+        given:
+        buildFile << """
+            generateEnvironmentProperties {
+                environment = 'not-found'
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/environment.properties'
+            }
+        """
+
+        when:
+        final def error = catchThrowable({ ->
+            GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments('generateEnvironmentProperties', '--info')
+                    .withPluginClasspath()
+                    .build()
+        })
+
+        then:
+        assertThat(error).isInstanceOf(UnexpectedBuildFailure.class)
+        !new File("${testProjectDir.root}/config/environment.properties").exists()
+    }
+
+    def "should use default config if environment not found in yaml but default config is specified"() {
+        given:
+        buildFile << """
+            generateEnvironmentProperties {
+                environment = 'not-found'
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/environment.properties'
+                defaultEnvironment = 'aat1'
+            }
+        """
+
+        when:
+        final def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('generateEnvironmentProperties', '--info')
+                .withPluginClasspath()
+                .build()
+
+        then:
+        println result.output
+        result.task(':generateEnvironmentProperties').outcome == SUCCESS
+
+        new File("${testProjectDir.root}/config/environment.properties").text ==
+                "# generated from properties.yml for aat1 environment\n" +
+                "app.name=aat-service\n" +
+                "abc.url=http://aat1:8081\n"
+    }
+
+    def "should generate properties for local environment"() {
         given:
         buildFile << """
             generateEnvironmentProperties {
@@ -40,7 +95,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         when:
         final def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('generateEnvironmentProperties', '--info', '-Penv=sit')
+                .withArguments('generateEnvironmentProperties', '--info')
                 .withPluginClasspath()
                 .build()
 
@@ -54,7 +109,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
                 "abc.url=http://localhost:8080\n"
     }
 
-    def "generate properties for sit environment"() {
+    def "should generate properties for sit environment"() {
         given:
         buildFile << """
             generateEnvironmentProperties {
@@ -67,7 +122,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         when:
         final def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('generateEnvironmentProperties', '--info', '-Penv=sit')
+                .withArguments('generateEnvironmentProperties', '--info')
                 .withPluginClasspath()
                 .build()
 
@@ -81,7 +136,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
                 "abc.url=http://sit:8080\n"
     }
 
-    def "generate properties from cascaded config for aat2 environment"() {
+    def "should generate properties from cascaded config for aat2 environment"() {
         given:
         buildFile << """
             generateEnvironmentProperties {

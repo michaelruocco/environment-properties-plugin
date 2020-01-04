@@ -210,6 +210,49 @@ files at the following locations:
 * config/aat1/environment.properties
 * config/sit/environment.properties
 
+### Default config
+
+By default if you specify an environment that is not present in the yaml file that is specified the plugin will return
+an error stating that the environment cannot be found in the yaml file. There may be cases where you have lots of
+environments that all use a basic or default configuration, if so, it can be a pain to have to specify lots of blank
+environment property blocks that just inherit from a default config, e.g:
+
+```yaml
+properties:
+  default: &config-default
+    app.name: test-service
+    abc.url: http://localhost:8080
+
+environments:
+
+  dev:
+    <<: *config-default
+
+  aat:
+    <<: *config-default
+
+  sit:
+    <<: *config-default
+```
+
+As a solution to this empty duplication it is possible to provide a default environment that will be used in the event
+and environment is not found, in this scenario the default environment properties will be used to generate the file
+instead of the plugin throwing an error. To configure a default environment you simply add another line of configuration
+to the task in your gradle file:
+
+```gradle
+generateMultipleEnvironmentProperties {
+    yamlPath = 'properties.yml'
+    environments = [ 'dev', 'aat', 'sit' ]
+    propertiesPath = 'config/{{env}}/environment.properties'
+    defaultEnvironment = 'default'
+}
+```
+
+This configuration would mean you would no longer need the empty definitions for dev, aat and sit shown in the yaml
+example above and your dev, aat and sit properties would still be generated using the default config values, instead
+of just seeing an error returned because those environments don't exist in the yaml.
+
 ## Running the Tests
 
 You can run the unit and tests for this project by running the following command:

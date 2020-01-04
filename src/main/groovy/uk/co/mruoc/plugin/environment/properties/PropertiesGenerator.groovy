@@ -10,18 +10,30 @@ class PropertiesGenerator {
     private final File yamlFile
     private final File propertiesFile
     private final String environment
+    private final String defaultEnvironment
 
-    PropertiesGenerator(final File yamlFile, File propertiesFile, final String environment) {
+    PropertiesGenerator(final File yamlFile,
+                        final File propertiesFile,
+                        final String environment,
+                        final String defaultEnvironment) {
         this.yamlFile = yamlFile
         this.propertiesFile = propertiesFile
         this.environment = environment
+        this.defaultEnvironment = defaultEnvironment
     }
 
     def generate() {
-        log.info("generating ${propertiesFile.absolutePath} for ${environment} environment from ${yamlFile.absolutePath}")
+        log.info(buildConfigMessage())
         validateInputYaml()
-        FileCreator.createFileIfDoesNotExist(propertiesFile)
         generateProperties()
+    }
+
+    private buildConfigMessage() {
+        def message = "generating ${propertiesFile.absolutePath} for ${environment} environment from ${yamlFile.absolutePath}, "
+        if (defaultEnvironment) {
+            return message + "default environment ${defaultEnvironment} will be used if ${environment} is not found in yaml"
+        }
+        return message + "no default environment provided, plugin will error if ${environment} is not found in yaml"
     }
 
     private validateInputYaml() {
@@ -33,12 +45,18 @@ class PropertiesGenerator {
 
     private generateProperties() {
         def yamlProperties = new Yaml().load(yamlFile.text)
-        if (!yamlProperties['environments'].containsKey(environment)) {
-            log.warn("no properties found in yaml ${yamlFile.absolutePath} for environment ${environment}")
+        def environmentFinder = new EnvironmentFinder(yamlProperties, environment, defaultEnvironment)
+        def environment = environmentFinder.environmentOrDefault
+        if (!environment) {
+            throw new EnvironmentNotFoundInYamlException("${environment} environment and default config ${defaultConfig} not found in yaml ${yamlFile.absolutePath}")
         }
+        buildEnvironmentProperties(yamlProperties, environment.get())
+    }
 
+    private buildEnvironmentProperties(def yamlProperties, def environment) {
         def collector = []
         yamlProperties['environments'][environment].each { k, v -> traverse(k, v, collector) }
+        FileCreator.createFileIfDoesNotExist(propertiesFile)
         propertiesFile.withWriter { out ->
             out.writeLine("# generated from ${yamlFile.name} for ${environment} environment")
         }

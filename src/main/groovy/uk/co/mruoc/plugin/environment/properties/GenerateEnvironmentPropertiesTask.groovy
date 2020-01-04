@@ -4,11 +4,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.slf4j.LoggerFactory
+import org.gradle.api.tasks.Optional
 
 class GenerateEnvironmentPropertiesTask extends DefaultTask {
-
-    private def log = LoggerFactory.getLogger(GenerateEnvironmentPropertiesTask.class)
 
     @Input
     String environment
@@ -19,13 +17,17 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
     @Input
     String propertiesPath
 
+    @Input
+    @Optional
+    String defaultEnvironment
+
     GenerateEnvironmentPropertiesTask() {
         description = 'Generates properties file from properties.yaml based on specified environment'
     }
 
     @TaskAction
     def run() {
-        def generator = new PropertiesGenerator(yamlFile, propertiesFile, environment)
+        def generator = new PropertiesGenerator(yamlFile, propertiesFile, environment, defaultEnvironment)
         generator.generate()
     }
 

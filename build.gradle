@@ -27,6 +27,7 @@ dependencies {
     compile 'org.yaml:snakeyaml:1.25'
 
     testCompile 'junit:junit:4.13-rc-2'
+    testCompile 'org.assertj:assertj-core:3.14.0'
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
     }

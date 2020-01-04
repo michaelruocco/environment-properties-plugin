@@ -27,7 +27,7 @@ class GenerateMultipleEnvironmentPropertiesTest extends Specification {
         dest << src.text
     }
 
-    def "generate properties for multiple environments"() {
+    def "should generate properties for multiple environments"() {
         given:
         buildFile << """
             generateMultipleEnvironmentProperties {
