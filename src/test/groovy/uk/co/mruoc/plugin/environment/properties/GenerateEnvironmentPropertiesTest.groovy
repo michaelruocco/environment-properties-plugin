@@ -77,7 +77,7 @@ class GenerateEnvironmentPropertiesTest extends Specification {
         result.task(':generateEnvironmentProperties').outcome == SUCCESS
 
         new File("${testProjectDir.root}/config/environment.properties").text ==
-                "# generated from properties.yml for aat1 environment\n" +
+                "# generated from properties.yml for not-found environment\n" +
                 "app.name=aat-service\n" +
                 "abc.url=http://aat1:8081\n"
     }

@@ -47,8 +47,8 @@ class PropertiesGenerator {
         def yamlProperties = new Yaml().load(yamlFile.text)
         def environmentFinder = new EnvironmentFinder(yamlProperties, environment, defaultEnvironment)
         def environment = environmentFinder.environmentOrDefault
-        if (!environment) {
-            throw new EnvironmentNotFoundInYamlException("${environment} environment and default config ${defaultConfig} not found in yaml ${yamlFile.absolutePath}")
+        if (!environment.isPresent()) {
+            throw new EnvironmentNotFoundInYamlException("${environment} environment and default environment ${defaultEnvironment} not found in yaml ${yamlFile.absolutePath}")
         }
         buildEnvironmentProperties(yamlProperties, environment.get())
     }
@@ -58,7 +58,7 @@ class PropertiesGenerator {
         yamlProperties['environments'][environment].each { k, v -> traverse(k, v, collector) }
         FileCreator.createFileIfDoesNotExist(propertiesFile)
         propertiesFile.withWriter { out ->
-            out.writeLine("# generated from ${yamlFile.name} for ${environment} environment")
+            out.writeLine(buildCommentMessage())
         }
         collector.each { propertiesFile << it + "\n" }
     }
@@ -75,6 +75,10 @@ class PropertiesGenerator {
         if (value == null)
             return ""
         return value
+    }
+
+    private buildCommentMessage() {
+        return "# generated from ${yamlFile.name} for ${this.environment} environment"
     }
 
 }

@@ -1,10 +1,13 @@
 package uk.co.mruoc.plugin.environment.properties
 
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import static org.assertj.core.api.Assertions.assertThat
+import static org.assertj.core.api.Assertions.catchThrowable
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class GenerateMultipleEnvironmentPropertiesTest extends Specification {
@@ -55,6 +58,63 @@ class GenerateMultipleEnvironmentPropertiesTest extends Specification {
 
         new File("${testProjectDir.root}/config/sit/environment.properties").text ==
                 "# generated from properties.yml for sit environment\n" +
+                "app.name=test-service-sit\n" +
+                "abc.url=http://sit:8080\n"
+    }
+
+    def "should error if environment not present in yaml and default config is not specified"() {
+        given:
+        buildFile << """
+            generateEnvironmentProperties {
+                environments = [ 'aat1', 'not-found' ]
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/{{env}}/environment.properties'
+            }
+        """
+
+        when:
+        final def error = catchThrowable({ ->
+            GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments('generateEnvironmentProperties', '--info')
+                    .withPluginClasspath()
+                    .build()
+        })
+
+        then:
+        assertThat(error).isInstanceOf(UnexpectedBuildFailure.class)
+        !new File("${testProjectDir.root}/config/not-found/environment.properties").exists()
+    }
+
+    def "should generate properties for environment not present in yaml if default environment specified"() {
+        given:
+        buildFile << """
+            generateMultipleEnvironmentProperties {
+                defaultEnvironment = 'sit'
+                environments = [ 'aat1', 'not-found' ]
+                yamlPath = 'properties.yml'
+                propertiesPath = 'config/{{env}}/environment.properties'
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('generateMultipleEnvironmentProperties', '--info')
+                .withPluginClasspath()
+                .build()
+
+        then:
+        println result.output
+        result.task(":generateMultipleEnvironmentProperties").outcome == SUCCESS
+
+        new File("${testProjectDir.root}/config/aat1/environment.properties").text ==
+                "# generated from properties.yml for aat1 environment\n" +
+                "app.name=aat-service\n" +
+                "abc.url=http://aat1:8081\n"
+
+        new File("${testProjectDir.root}/config/not-found/environment.properties").text ==
+                "# generated from properties.yml for not-found environment\n" +
                 "app.name=test-service-sit\n" +
                 "abc.url=http://sit:8080\n"
     }
