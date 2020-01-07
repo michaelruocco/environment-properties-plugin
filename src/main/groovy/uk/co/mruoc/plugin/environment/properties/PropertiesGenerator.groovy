@@ -48,7 +48,7 @@ class PropertiesGenerator {
         def environmentFinder = new EnvironmentFinder(yamlProperties, environment, defaultEnvironment)
         def environment = environmentFinder.environmentOrDefault
         if (!environment.isPresent()) {
-            throw new EnvironmentNotFoundInYamlException("${environment} environment and default environment ${defaultEnvironment} not found in yaml ${yamlFile.absolutePath}")
+            throw new EnvironmentNotFoundInYamlException("${this.environment} environment and default environment ${defaultEnvironment} not found in yaml ${yamlFile.absolutePath}")
         }
         buildEnvironmentProperties(yamlProperties, environment.get())
     }

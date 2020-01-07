@@ -17,7 +17,7 @@ class EnvironmentFinder {
 
     Optional<String> getEnvironmentOrDefault() {
         def result = getEnvironmentIfFound()
-        if (result) {
+        if (result.isPresent()) {
             return result
         }
         return getDefaultIfFound()
