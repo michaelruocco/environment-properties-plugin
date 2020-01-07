@@ -40,7 +40,7 @@ class EnvironmentFinder {
             log.warn("default environment ${defaultEnvironment} not found in yaml")
             return Optional.empty()
         }
-        log.info("using default environment ${defaultEnvironment}")
+        log.warn("using default environment ${defaultEnvironment}")
         return Optional.of(defaultEnvironment)
     }
 
