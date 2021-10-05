@@ -1,7 +1,7 @@
 # Environment Properties Plugin
 
-[![Build Status](https://travis-ci.org/michaelruocco/environment-properties-plugin.svg?branch=master)](https://travis-ci.org/michaelruocco/environment-properties-plugin)
-[![Download](https://api.bintray.com/packages/michaelruocco/maven/environment-properties-plugin/images/download.svg) ](https://bintray.com/michaelruocco/maven/environment-properties-plugin/_latestVersion)
+[![Build](https://github.com/michaelruocco/environment-properties-plugin/workflows/pipeline/badge.svg)](https://github.com/michaelruocco/environment-properties-plugin/actions)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/github/michaelruocco/environment-properties/com.github.michaelruocco.environment-properties.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=gradle%20plugin)](https://plugins.gradle.org/plugin/com.github.michaelruocco.environment-properties)
 
 This plugin intends to make the management of environment specific properties easier, often it is a pain if you have
 and environment specific properties that is the same in a number of environments but needs to vary in one or a couple
