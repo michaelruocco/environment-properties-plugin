@@ -44,16 +44,12 @@ jobs:
       - name: Release
         if: github.ref == 'refs/heads/master'
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          OSSRH_PGP_SECRET_KEY: ${{ secrets.OSSRH_PGP_SECRET_KEY }}
-          OSSRH_PGP_SECRET_KEY_PASSWORD: ${{ secrets.OSSRH_PGP_SECRET_KEY_PASSWORD }}
-          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
-          PUBLISH_SECRET: ${{ secrets.PUBLISH_SECRET }}
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         run: |
           ./gradlew release -Prelease.customUsername=${{ github.actor }} -Prelease.customPassword=${{ github.token }}
-          ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
-          ./gradlew publishPlugins -Pgradle.publish.key=PUBLISH_KEY -Pgradle.publish.secret=PUBLISH_SECRET
+          ./gradlew publishPlugins -Pgradle.publish.key=GRADLE_PUBLISH_KEY -Pgradle.publish.secret=GRADLE_PUBLISH_SECRET
+          ./gradlew currentVersion
 
       - name: Print New Version
         run: ./gradlew currentVersion -q -Prelease.quiet
