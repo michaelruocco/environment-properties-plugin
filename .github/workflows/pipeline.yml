@@ -36,7 +36,7 @@ jobs:
         run: ./gradlew dependencyUpdates
 
       - name: Build
-        run: ./gradlew clean spotlessCheck assemble
+        run: ./gradlew clean assemble
 
       - name: Test
         run: ./gradlew test
