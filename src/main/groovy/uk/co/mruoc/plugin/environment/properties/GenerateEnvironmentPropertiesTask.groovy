@@ -2,7 +2,6 @@ package uk.co.mruoc.plugin.environment.properties
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.Optional
 
@@ -27,18 +26,10 @@ class GenerateEnvironmentPropertiesTask extends DefaultTask {
 
     @TaskAction
     def run() {
+        def yamlFile = project.file(yamlPath)
+        def propertiesFile = project.file(propertiesPath)
         def generator = new PropertiesGenerator(yamlFile, propertiesFile, environment, defaultEnvironment)
         generator.generate()
-    }
-
-    @Internal
-    protected getYamlFile() {
-        return project.file(yamlPath)
-    }
-
-    @Internal
-    protected getPropertiesFile() {
-        return project.file(propertiesPath)
     }
 
 }

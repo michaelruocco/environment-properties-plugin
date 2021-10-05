@@ -2,7 +2,6 @@ package uk.co.mruoc.plugin.environment.properties
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.slf4j.LoggerFactory
@@ -32,23 +31,18 @@ class GenerateMultipleEnvironmentPropertiesTask extends DefaultTask {
     def run() {
         for (String environment : environments) {
             def propertiesFile = buildPropertiesFile(environment)
+            def yamlFile = project.file(yamlPath)
             def generator = new PropertiesGenerator(yamlFile, propertiesFile, environment, defaultEnvironment)
             generator.generate()
         }
     }
 
-    @Internal
-    protected buildPropertiesFile(String environment) {
+    private buildPropertiesFile(String environment) {
         final def path = propertiesPath.replaceAll("\\{\\{env}}", environment)
         log.info("building properties file with path ${path}")
         def file = project.file(path)
         log.info("created properties file at ${file.absolutePath}")
         file
-    }
-
-    @Internal
-    protected getYamlFile() {
-        return project.file(yamlPath)
     }
 
 }
