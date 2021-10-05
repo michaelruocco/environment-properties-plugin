@@ -1,0 +1,59 @@
+name: pipeline
+
+on:
+  push:
+    branches-ignore:
+      - 'environment-properties-plugin-*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle
+
+      - name: Print Current Version
+        run: ./gradlew currentVersion -q -Prelease.quiet
+
+      - name: Check Dependencies
+        run: ./gradlew dependencyUpdates
+
+      - name: Build
+        run: ./gradlew clean spotlessCheck assemble
+
+      - name: Test
+        run: ./gradlew test
+
+      - name: Release
+        if: github.ref == 'refs/heads/master'
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_PGP_SECRET_KEY: ${{ secrets.OSSRH_PGP_SECRET_KEY }}
+          OSSRH_PGP_SECRET_KEY_PASSWORD: ${{ secrets.OSSRH_PGP_SECRET_KEY_PASSWORD }}
+          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
+          PUBLISH_SECRET: ${{ secrets.PUBLISH_SECRET }}
+        run: |
+          ./gradlew release -Prelease.customUsername=${{ github.actor }} -Prelease.customPassword=${{ github.token }}
+          ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+          ./gradlew publishPlugins -Pgradle.publish.key=PUBLISH_KEY -Pgradle.publish.secret=PUBLISH_SECRET
+
+      - name: Print New Version
+        run: ./gradlew currentVersion -q -Prelease.quiet
