@@ -62,11 +62,7 @@ pluginBundle {
 
 spotless {
     groovy {
-        importOrder()
-    }
-    java {
-        removeUnusedImports()
-        trimTrailingWhitespace()
+        importOrder('groovy.util.logging', '')
         indentWithSpaces(4)
         endWithNewline()
 
