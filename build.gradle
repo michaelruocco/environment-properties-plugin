@@ -5,6 +5,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.16.0'
     id 'pl.allegro.tech.build.axion-release' version '1.10.3'
     id 'com.github.ben-manes.versions' version '0.39.0'
+    id 'com.diffplug.spotless' version '5.11.0'
 }
 
 group = 'com.github.michaelruocco'
@@ -22,12 +23,12 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-io:commons-io:2.11.0'
-    compile 'org.yaml:snakeyaml:1.29'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.yaml:snakeyaml:1.29'
 
-    testCompile 'junit:junit:4.13.2'
-    testCompile 'org.assertj:assertj-core:3.21.0'
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+    testImplementation('org.spockframework:spock-core:2.0-groovy-3.0') {
         exclude group: 'org.codehaus.groovy'
     }
 }
@@ -39,65 +40,10 @@ test {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-def pomConfig = {
-    licenses {
-        license {
-            name 'BSD License'
-            url 'http://www.opensource.org/licenses/bsd-license.php'
-            distribution 'repo'
-        }
-    }
-    developers {
-        developer {
-            id 'mruoc'
-            name 'Michael Ruocco'
-            email 'michael.ruocco@hotmail.com'
-        }
-    }
-
-    scm {
-        url 'https://github.com/michaelruocco/environment-properties-plugin'
-    }
-}
-
-publishing {
-    publications {
-        mavenPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar {
-                classifier "sources"
-            }
-            artifact javadocJar {
-                classifier "javadoc"
-            }
-            groupId project.group
-            artifactId 'environment-properties-plugin'
-            version project.version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'Gradle plugin to generator environment properties')
-                root.appendNode('name', 'environment-properties-plugin')
-                root.appendNode('url', 'https://github.com/michaelruocco/environment-properties-plugin')
-                root.children().last() + pomConfig
-            }
-        }
-    }
-}
+//java {
+//    withJavadocJar()
+//    withSourcesJar()
+//}
 
 pluginBundle {
     website = 'https://github.com/michaelruocco/environment-properties-plugin'
@@ -111,5 +57,26 @@ pluginBundle {
             id = 'com.github.michaelruocco.environment-properties'
             displayName = 'environment-properties-plugin'
         }
+    }
+}
+
+spotless {
+    groovy {
+        importOrder()
+    }
+    java {
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+
+        replace 'Not enough space after if', 'if(', 'if ('
+        replaceRegex 'Too much space after if', 'if +\\(', 'if ('
+
+        replace 'Not enough space after for', 'for(', 'for ('
+        replaceRegex 'Too much space after for', 'for +\\(', 'for ('
+
+        replace 'Not enough space after while', 'while(', 'while ('
+        replaceRegex 'Too much space after while', 'while +\\(', 'while ('
     }
 }

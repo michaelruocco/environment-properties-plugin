@@ -1,14 +1,14 @@
 package uk.co.mruoc.plugin.environment.properties
 
+import static org.assertj.core.api.Assertions.assertThat
+import static org.assertj.core.api.Assertions.catchThrowable
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-
-import static org.assertj.core.api.Assertions.assertThat
-import static org.assertj.core.api.Assertions.catchThrowable
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class GenerateMultipleEnvironmentPropertiesTest extends Specification {
 
