@@ -2,10 +2,9 @@ plugins {
     id 'groovy'
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.4'
-    id 'com.gradle.plugin-publish' version '0.13.0'
+    id 'com.gradle.plugin-publish' version '0.16.0'
     id 'pl.allegro.tech.build.axion-release' version '1.10.3'
-    id 'com.github.ben-manes.versions' version '0.27.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
 }
 
 group = 'com.github.michaelruocco'
@@ -23,11 +22,11 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-io:commons-io:2.6'
-    compile 'org.yaml:snakeyaml:1.25'
+    compile 'commons-io:commons-io:2.11.0'
+    compile 'org.yaml:snakeyaml:1.29'
 
-    testCompile 'junit:junit:4.13-rc-2'
-    testCompile 'org.assertj:assertj-core:3.14.0'
+    testCompile 'junit:junit:4.13.2'
+    testCompile 'org.assertj:assertj-core:3.21.0'
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
     }
@@ -95,34 +94,6 @@ publishing {
                 root.appendNode('name', 'environment-properties-plugin')
                 root.appendNode('url', 'https://github.com/michaelruocco/environment-properties-plugin')
                 root.children().last() + pomConfig
-            }
-        }
-    }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['mavenPublication']
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = 'environment-properties-plugin'
-        userOrg = 'michaelruocco'
-        licenses = ['bsd']
-        websiteUrl = 'https://github.com/michaelruocco/environment-properties-plugin'
-        vcsUrl = 'https://github.com/michaelruocco/environment-properties-plugin.git'
-        labels = ['environment', 'properties', 'gradle']
-        version {
-            name = project.version
-            desc = project.version
-            released  = new Date()
-            gpg {
-                sign = true
-            }
-            mavenCentralSync {
-                sync = true
             }
         }
     }
